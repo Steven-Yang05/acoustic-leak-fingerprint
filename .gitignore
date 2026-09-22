@@ -1,0 +1,20 @@
+# data and all generated artifacts
+data/
+features/
+train_test_data/
+results*/
+models_*/
+models*/
+figures/
+
+# python
+__pycache__/
+
+# model / array binaries
+*.npy
+*.pt
+*.joblib
+*.zip
+
+# editor
+.vscode/

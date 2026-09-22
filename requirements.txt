@@ -1,0 +1,20 @@
+# Pinned environment for reproducibility.
+#
+# WARNING — two pins are load-bearing, not cosmetic:
+#   * scipy must stay <= 1.15.x: under scipy 1.18, sklearn's
+#     LogisticRegression(lbfgs) crashes at the PROCESS level inside the
+#     nested Platt-calibration loops (no Python traceback; the run dies).
+#   * numpy must stay at 2.2.x: numpy 2.4.6 crashes inside einsum during
+#     feature/model evaluation.
+# torch 2.10.0 was tested; GPU is optional (CPU works, deep models are slow).
+
+numpy==2.2.6
+scipy==1.15.3
+scikit-learn==1.9.0
+torch==2.10.0
+torchaudio==2.10.0
+librosa==0.11.0
+pandas==3.0.5
+soundfile
+matplotlib
+joblib
