@@ -113,6 +113,35 @@ python src/audit_negative_sources.py
 # 12. paper figures -> figures/
 python src/fig_pipeline.py
 python src/fig_robustness.py
+
+# 13. frozen verification of the 5 ablation fusion pairs (P1..P5)
+#     -> results_fusion_pairs_verification/, models_fusion_pairs/
+#     (Table 3, middle block)
+#     requires step 7 (reads models_frozen/ and
+#     results_frozen_verification/fixed_test_predictions.csv)
+python src/fusion_pairs_verification.py
+
+# 14. paired statistics ours (P0) vs each ablation pair: exact McNemar,
+#     5000x group-cluster bootstrap CIs (dF1, dAUC), plus Brier /
+#     log-loss / 15-bin ECE for all six pairs
+#     -> results_verification_stats/
+#     requires steps 7 and 13 (statistics only; no retraining)
+python src/verification_comparison_stats.py
+
+# 15. faithful re-run of the recorded wav2vec 2.0 fine-tune (the baseline
+#     script does not persist weights), with a consistency gate against
+#     the recorded 0.950/0.950/0.9676/5/5; saves weights and per-sample
+#     probabilities -> models_w2v2_finetuned/, results_w2v2_stats/
+#     requires steps 7 and 10; uses the locally cached WAV2VEC2_BASE
+#     backbone (no download)
+python src/w2v2_finetune_verify.py
+
+# 16. ours vs wav2vec 2.0 fine-tuned: w2v2 calibration (Brier / log-loss /
+#     ECE), exact McNemar + group-bootstrap CIs (produced by step 15),
+#     parameter-count comparison and FN-cost sensitivity
+#     -> results_w2v2_stats/
+#     requires steps 7, 10 and 15
+python src/w2v2_verification_stats.py
 ```
 
 ### extras/
@@ -165,6 +194,10 @@ acoustic-leak-fingerprint/
 │   ├── audit_calibration.py     calibration / reliability audit (Sec. IV-D)
 │   ├── audit_threshold_fairness.py  threshold-fairness audit (Sec. IV-D)
 │   ├── audit_negative_sources.py    negative-source sensitivity (Sec. IV-D)
+│   ├── fusion_pairs_verification.py  5 ablation fusion pairs (Table 3)
+│   ├── verification_comparison_stats.py  McNemar/bootstrap + calibration
+│   ├── w2v2_finetune_verify.py  w2v2 fine-tune re-run + weight persistence
+│   ├── w2v2_verification_stats.py  ours vs w2v2-FT paired stats + cost
 │   ├── fig_pipeline.py          pipeline schematic -> figures/
 │   └── fig_robustness.py        robustness figure -> figures/
 ├── extras/                      tested-and-rejected dynamic gating + diagnostics
@@ -201,6 +234,10 @@ correspond to the original experiment numbering as follows:
 | `AA01_negative_source_sensitivity.py` | `src/audit_negative_sources.py` |
 | `AA02_calibration_reliability_audit.py` | `src/audit_calibration.py` |
 | `AA03_threshold_fairness_audit.py` | `src/audit_threshold_fairness.py` |
+| `30_all_fusion_pairs_verification.py` | `src/fusion_pairs_verification.py` |
+| `31_verification_comparison_stats.py` | `src/verification_comparison_stats.py` |
+| `32_w2v2_verification_stats.py` | `src/w2v2_verification_stats.py` |
+| `33_w2v2_finetune_save_verify.py` | `src/w2v2_finetune_verify.py` |
 | `27_icassp_pipeline_figure.py` | `src/fig_pipeline.py` |
 | `28_icassp_robustness_figure.py` | `src/fig_robustness.py` |
 | `15_training_only_snr_mechanism_svm_cnn1d.py` | `extras/snr_mechanism.py` |
@@ -211,7 +248,12 @@ correspond to the original experiment numbering as follows:
 
 Output directories are likewise renamed (e.g. `results_training_only_selection_11`
 → `results_model_selection`, `results_frozen_svm_cnn1d_14` → `results_frozen_verification`,
-`results_leave_one_condition_out_20` → `results_loco`); each script prints its
+`results_leave_one_condition_out_20` → `results_loco`,
+`results_all_fusion_pairs_verification_30` → `results_fusion_pairs_verification`,
+`results_verification_comparison_stats_31` → `results_verification_stats`,
+`results_w2v2_verification_stats_32` → `results_w2v2_stats`,
+`models_all_fusion_pairs_30` → `models_fusion_pairs`,
+`models_w2v2_finetuned_33` → `models_w2v2_finetuned`); each script prints its
 own output directory when run.
 
 ## License
