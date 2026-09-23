@@ -212,40 +212,6 @@ acoustic-leak-fingerprint/
                               (all produced by the scripts above; git-ignored)
 ```
 
-### Mapping from internal experiment numbers
-
-For cross-checking against the project's internal progress log, the scripts
-correspond to the original experiment numbering as follows:
-
-| Original experiment script | This repository |
-|---|---|
-| `check_audio.py` | `src/check_audio.py` |
-| `01_extract_features.py` | `src/extract_features.py` |
-| `02_make_train_test_split.py` | `src/make_group_split.py` |
-| `26_acoustic_signature_analysis.py` | `src/acoustic_signature.py` |
-| `11_training_only_model_selection_audit.py` | `src/model_selection_oof.py` |
-| `12_training_only_heterogeneous_fusion_audit.py` | `src/fusion_pair_search.py` |
-| `13_training_only_repeated_fusion_stability.py` | `src/stability_selection.py` |
-| `14_frozen_svm_cnn1d_fixed_test_verification.py` | `src/frozen_verification.py` |
-| `20_leave_one_condition_out.py` | `src/leave_one_condition_out.py` |
-| `29_leave_one_region_out.py` | `src/leave_one_region_out.py` |
-| `21_frozen_snr_degradation.py` | `src/snr_degradation.py` |
-| `22_pretrained_wav2vec2_audit.py` | `src/wav2vec2_baseline.py` |
-| `AA01_negative_source_sensitivity.py` | `src/audit_negative_sources.py` |
-| `AA02_calibration_reliability_audit.py` | `src/audit_calibration.py` |
-| `AA03_threshold_fairness_audit.py` | `src/audit_threshold_fairness.py` |
-| `30_all_fusion_pairs_verification.py` | `src/fusion_pairs_verification.py` |
-| `31_verification_comparison_stats.py` | `src/verification_comparison_stats.py` |
-| `32_w2v2_verification_stats.py` | `src/w2v2_verification_stats.py` |
-| `33_w2v2_finetune_save_verify.py` | `src/w2v2_finetune_verify.py` |
-| `27_icassp_pipeline_figure.py` | `src/fig_pipeline.py` |
-| `28_icassp_robustness_figure.py` | `src/fig_robustness.py` |
-| `15_training_only_snr_mechanism_svm_cnn1d.py` | `extras/snr_mechanism.py` |
-| `16_training_only_reliability_mechanism_svm_cnn1d.py` | `extras/reliability_mechanism.py` |
-| `17_training_only_reliability_dynamic_gate_meta_cv.py` | `extras/reliability_gate_meta_cv.py` |
-| `18_training_only_reliability_gate_joint_threshold_meta_cv.py` | `extras/reliability_joint_gate_meta_cv.py` |
-| `19_three_selected_fusion_convergence_audit_clean.py` | `extras/fusion_convergence_diagnostics.py` |
-
 Output directories are likewise renamed (e.g. `results_training_only_selection_11`
 → `results_model_selection`, `results_frozen_svm_cnn1d_14` → `results_frozen_verification`,
 `results_leave_one_condition_out_20` → `results_loco`,
