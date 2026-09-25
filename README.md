@@ -9,8 +9,9 @@ This repository contains the complete, end-to-end reproducible pipeline behind
 the paper: from raw 1-second 8 kHz audio clips, through a 212-dimensional
 handcrafted acoustic feature set and a waveform 1D CNN, to a frozen,
 group-aware, Platt-calibrated SVM+CNN fusion — plus every post-freeze audit
-(LOCO/LORO generalization, SNR degradation, wav2vec 2.0 baseline, calibration /
-threshold-fairness / negative-source audits) and the paper figures.
+(LOCO/LORO generalization with MLP+2D-CNN and wav2vec-2.0 transfer baselines,
+SNR degradation, wav2vec 2.0 baseline, calibration / threshold-fairness /
+negative-source / RMS-only audits) and the paper figures.
 
 ## Data availability
 
@@ -73,6 +74,10 @@ python src/make_group_split.py
 #    (Section II, Table 1, Figs. 1-3)
 python src/acoustic_signature.py
 
+# 3b. noise vs no-leak band-share contrasts with 5000x group-cluster
+#     bootstrap CIs -> results_signature/   (Table 1, Delta column)
+python src/band_share_contrast.py
+
 # 4. 7-model group-aware OOF model selection -> results_model_selection/
 #    (Section III)
 python src/model_selection_oof.py
@@ -96,6 +101,12 @@ python src/frozen_verification.py
 python src/leave_one_condition_out.py
 python src/leave_one_region_out.py
 
+# 8b. LOCO transfer baselines: MLP+2D CNN fusion and fine-tuned wav2vec 2.0
+#     -> results_loco/loco_extra_results.csv   (Section IV-B)
+#     requires steps 1 and 8; heavy (deep retraining + w2v2 fine-tuning);
+#     use --skip-w2v2 for the MLP+2D CNN part only
+python src/leave_one_condition_out_extra.py
+
 # 9. post-freeze additive-noise degradation (white/pink, +20...-5 dB)
 #    -> results_snr_degradation/   (Fig. 5(a,b))
 python src/snr_degradation.py
@@ -103,12 +114,14 @@ python src/snr_degradation.py
 # 10. wav2vec 2.0 baseline -> results_wav2vec2/   (the w2v2 rows of Table 3)
 python src/wav2vec2_baseline.py
 
-# 11. Section IV-D audits (calibration, threshold fairness, negative sources)
-#     -> results_audit_calibration/, results_audit_threshold_fairness/,
-#        results_audit_negative_sources/
+# 11. Section IV-D audits (calibration, threshold fairness, negative sources,
+#     RMS-only ablation) -> results_audit_calibration/,
+#     results_audit_threshold_fairness/, results_audit_negative_sources/,
+#     results_rms_audit/   (RMS rows of Table 4)
 python src/audit_calibration.py
 python src/audit_threshold_fairness.py
 python src/audit_negative_sources.py
+python src/rms_audit.py
 
 # 12. paper figures -> figures/
 python src/fig_pipeline.py
@@ -183,17 +196,20 @@ acoustic-leak-fingerprint/
 │   ├── extract_features.py      212-d handcrafted features -> features/
 │   ├── make_group_split.py      800/200 group-isolated split -> train_test_data/
 │   ├── acoustic_signature.py    spectral-physical signature analysis (Sec. II)
+│   ├── band_share_contrast.py   noise/no-leak band-share bootstrap CIs (Tab. 1)
 │   ├── model_selection_oof.py   7-model group-aware OOF selection
 │   ├── fusion_pair_search.py    12 fusion pairs + nested Platt calibration
 │   ├── stability_selection.py   repeated stability selection (Table 2)
 │   ├── frozen_verification.py   frozen 0.55/0.45 @ tau=0.520 (Table 3)
 │   ├── leave_one_condition_out.py  LOCO generalization
+│   ├── leave_one_condition_out_extra.py  LOCO: MLP+2D CNN & w2v2-FT (Sec. IV-B)
 │   ├── leave_one_region_out.py     LORO (cross-zone) generalization
 │   ├── snr_degradation.py       additive-noise robustness (Fig. 5a,b)
 │   ├── wav2vec2_baseline.py     pretrained wav2vec 2.0 baseline
 │   ├── audit_calibration.py     calibration / reliability audit (Sec. IV-D)
 │   ├── audit_threshold_fairness.py  threshold-fairness audit (Sec. IV-D)
 │   ├── audit_negative_sources.py    negative-source sensitivity (Sec. IV-D)
+│   ├── rms_audit.py             RMS-only ablation (Sec. IV-D, Table 4)
 │   ├── fusion_pairs_verification.py  5 ablation fusion pairs (Table 3)
 │   ├── verification_comparison_stats.py  McNemar/bootstrap + calibration
 │   ├── w2v2_finetune_verify.py  w2v2 fine-tune re-run + weight persistence
